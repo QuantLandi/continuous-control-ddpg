@@ -86,3 +86,46 @@ class Agent():
             action += self.noise.sample()
         action = np.clip(action, -1, 1)
         return action
+    def reset(self):
+        self.noise.reset()
+        
+    def learn(self, experiences, gamma):
+        """
+        Updates policy and value parameters using batch of experience tuples.
+        """
+        states, actions, rewards, next_states, is_episode_over = experiences
+        
+        # update critic
+        # predict next actions
+        next_actions = self.actor_target(next_states)
+        # predict Q targets for next states
+        next_Q_targets = self.critic_target(next_states, next_actions)
+        # set next_Q_targets = 0 where state is terminal 
+        # so that Q_targets = rewards, if state is terminal
+        next_Q_targets = next_Q_targets * (1 - is_episode_over)
+        # compute y_i, i.e. Q targets for current states
+        Q_targets = rewards + (gamma * next_Q_targets)
+        Q_predictions = self.critic_local(states, actions)
+        # compute critic prediction loss with respect to targets
+        critic_loss = F.mse_loss(Q_predictions, Q_targets)
+        # minimize loss
+        # clear gradients
+        self.critic_optimizer.zero_grad()
+        # compute gradients
+        critic_loss.backward()
+        # update parameters
+        self.critic_optimizer.step()
+        
+        # update actor
+        # compute actor loss
+        actions_predicted = self.actor_local(states)
+        # since we aim at maximizing the value of (s, a) under policy mu,
+        # we minimize its negative        
+        actor_loss = -self.critic_local(states, action_predictions).mean()
+        # minimize loss
+        # clear gradients
+        self.actor_optimizer.zero_grad()
+        # compute gradients
+        actor_loss.backward()
+        # update parameters
+        self.actor_optimizer.step()
