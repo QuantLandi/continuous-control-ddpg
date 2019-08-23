@@ -68,3 +68,21 @@ class Agent():
         if enough_samples:
             experiences = self.replay_buffer.sample()
             self.learn(experiences, GAMMA)
+
+    def act(self, state, add_noise=True):
+        """Returns actions for given state as per current policy."""
+        state = torch.from_numpy(state).float().to(device)
+        # set local actor network in evaluation mode
+        self.actor_local.eval()
+        # temporarily deactivate PyTorch autograd engine
+        # to reduce memory usage and speed up computation
+        with torch.no_grad():
+            action = self.actor_local(state).cpu().data.numpy()
+        # set local actor network in training mode
+        self.actor_local.train()
+        # add temporally correlated noise to explore well
+        # in a physical environment with momentum
+        if add_noise:
+            action += self.noise.sample()
+        action = np.clip(action, -1, 1)
+        return action
