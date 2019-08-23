@@ -3,11 +3,11 @@ import random
 import copy
 from collections import namedtuple, deque
 
-from model import Actor, Critic
-
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
+
+from model import Actor, Critic
 
 BUFFER_SIZE = 1000000  # replay buffer size
 BATCH_SIZE = 128       # minibatch size
@@ -37,3 +37,21 @@ class Agent():
         self.state_size = state_size
         self.action_size = action_size
         self.random_seed = random.seed(random_seed)
+        
+        # create actor's local and target networks and local network's optimizer
+        self.actor_local = Actor(state_size, action_size, random_seed).to(device)
+        self.actor_target = Actor(state_size, action_size, random_seed).to(device)
+        self.actor_optimizer = optim.Adam(self.actor_local.parameters(), lr=LR_ACTOR)
+        
+        # create critic's local and target networks and local network's optimizer
+        self.critic_local = Critic(state_size, action_size, random_seed).to(device)
+        self.critic_target = Critic(state_size, action_size, random_seed).to(device)
+        self.critic_optimizer = optim.Adam(self.actor_critic.parameters(),
+                                           lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
+        
+        # create Ornstein-Uhlenbeck noise to be added to action space
+        self.noise = OUNoise(action_size, random_seed)
+        
+        # create replay buffer
+        self.replay_buffer = ReplayBuffer(action_size, BUFFER_SIZE,
+                                          BATCH_SIZE, random_seed)
