@@ -118,10 +118,10 @@ class Agent():
         
         # update actor
         # compute actor loss
-        actions_predicted = self.actor_local(states)
+        predicted_actions = self.actor_local(states)
         # since we aim at maximizing the value of (s, a) under policy mu,
         # we minimize its negative        
-        actor_loss = -self.critic_local(states, action_predictions).mean()
+        actor_loss = -self.critic_local(states, predicted_actions).mean()
         # minimize loss
         # clear gradients
         self.actor_optimizer.zero_grad()
