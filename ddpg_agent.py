@@ -55,3 +55,16 @@ class Agent():
         # create replay buffer
         self.replay_buffer = ReplayBuffer(action_size, BUFFER_SIZE,
                                           BATCH_SIZE, random_seed)
+
+    def step(self, state, action, reward, next_state, is_episode_over):
+        """
+        Saves experience tuple in replay buffer and
+        samples batch of experience tuples at random.
+        """
+        # add (s, a, r, s') experience tuple to replay buffer
+        self.replay_buffer.add(state, action, reward, next_state, is_episode_over)
+        # if enough samples are available in replay buffer, learn from experience
+        enough_samples = len(self.replay_buffer) > BATCH_SIZE
+        if enough_samples:
+            experiences = self.replay_buffer.sample()
+            self.learn(experiences, GAMMA)
