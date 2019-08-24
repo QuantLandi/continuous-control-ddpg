@@ -188,3 +188,43 @@ class OUNoise:
         dx = self.theta * (self.mu - x) + self.sigma * noise
         self.state = x + dx
         return self.state
+
+class ReplayBuffer:
+    """Stores experience tuples to be sampled by the agent."""
+    
+    def __init__(self, action_size, buffer_size, batch_size, seed):
+        """
+        Initializes a ReplayBuffer object.
+
+        Parameters
+        ----------
+            buffer_size : int
+                Maximum number of experience tuples to store in replay buffer
+            batch_size : int
+                Number of experience tuples to be collected from replay buffer
+
+        """
+        self.action_size = action_size
+        self.memory = deque(maxlen=buffer_size)
+        self.batch_size = batch_size
+        field_names = ['state', 'action', 'reward', 'next_state', 'is_episode_over']
+        self.experience = namedtuple('Experience', field_names=field_names)
+        self.seed = random.seed(seed)
+
+    def add(self, state, action, reward, next_state, is_episode_over):
+        """Adds new experience tuple to memory."""
+        experiences = random.sample(self.memory, k=self.batch_size)
+
+        states = [e.state for e in experiences if e is not None]
+        actions = [e.action for e in experiences if e is not None]
+        rewards = [e.reward for e in experiences if e is not None]
+        next_states = [e.next_state for e in experiences if e is not None]
+        is_episode_over = [e.is_episode_over for e in experiences if e is not None]
+                states = torch.from_numpy(np.vstack(states)).float().to(device)
+        actions = torch.from_numpy(np.vstack(actions)).float().to(device)
+        rewards = torch.from_numpy(np.vstack(rewards)).float().to(device)
+        next_states = torch.from_numpy(np.vstack(next_states)).float().to(device)
+        is_episode_over = np.vstack(is_episode_over).astype(np.uint8)
+        is_episode_over = torch.from_numpy(is_episode_over).float().to(device)
+
+        return (states, actions, rewards, next_states, is_episode_over)
