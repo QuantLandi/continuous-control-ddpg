@@ -86,6 +86,7 @@ class Agent():
             action += self.noise.sample()
         action = np.clip(action, -1, 1)
         return action
+
     def reset(self):
         self.noise.reset()
         
