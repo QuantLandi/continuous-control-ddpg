@@ -92,6 +92,17 @@ class Agent():
     def learn(self, experiences, gamma):
         """
         Updates policy and value parameters using batch of experience tuples.
+
+        Sets Q_targets = r + (gamma * critic_target(next_states, next_actions))
+        where next_actions = actor_target(next_states))
+
+        Parameters
+        ----------
+            experiences : tuple
+                batch of experience tuples (s, a, r, s', is_episode_over)
+                sampled from replay buffer
+            gamma : float
+                Discount factor for value of next state
         """
         states, actions, rewards, next_states, is_episode_over = experiences
         
