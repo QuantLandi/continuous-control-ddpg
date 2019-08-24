@@ -99,7 +99,7 @@ class Agent():
         Parameters
         ----------
             experiences : tuple
-                batch of experience tuples (s, a, r, s', is_episode_over)
+                Batch of experience tuples (s, a, r, s', is_episode_over)
                 sampled from replay buffer
             gamma : float
                 Discount factor for value of next state
@@ -144,3 +144,24 @@ class Agent():
         # update target weights
         self.soft_update(self.critic_local, self.critic_target, TAU)
         self.soft_update(self.actor_local, self.actor_target, TAU)
+
+    def soft_update(local_network, target_network, tau):
+        """
+        Performs soft update of network weights.
+        Sets target_weights = tau*local_weights + (1-tau)*target_weights
+
+        Parameters
+        ----------
+            local_network : PyTorch neural network
+                Local network to copy weights from
+            target_network : PyTorch neural network
+                Target network to copy weights to
+            tau : float
+                Interpolation parameter
+        """
+        local_weights_batch = local_network.parameters()
+        target_weights_batch = target_network.parameters()
+        for local_weights, target_weights in zip(local_weights_batch,
+                                                 target_weights_batch):
+            updated_weights = tau*local_weights.data + (1-tau)*target_weights.data
+            target_weights.data.copy_(updated_weights)
