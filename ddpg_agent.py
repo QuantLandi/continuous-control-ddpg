@@ -212,7 +212,7 @@ class ReplayBuffer:
         self.seed = random.seed(seed)
 
     def add(self, state, action, reward, next_state, is_episode_over):
-        """Adds new experience tuple to memory."""
+        """Adds new experience batch to replay buffer memory."""
         experiences = random.sample(self.memory, k=self.batch_size)
 
         states = [e.state for e in experiences if e is not None]
