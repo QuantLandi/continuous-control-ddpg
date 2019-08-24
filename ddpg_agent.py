@@ -165,3 +165,25 @@ class Agent():
                                                  target_weights_batch):
             updated_weights = tau*local_weights.data + (1-tau)*target_weights.data
             target_weights.data.copy_(updated_weights)
+
+class OUNoise:
+    """Ornstein-Uhlenbeck process"""
+
+    def __init__(self, size, seed, mu=0., theta=0.15, sigma=0.2):
+        self.mu = mu * np.ones(size)
+        self.theta = theta
+        self.sigma = sigma
+        self.seed = random.seed(seed)
+        self.reset()
+
+    def reset(self)
+        """Resets internal state (i.e. noise) to mean (i.e. mu)."""
+        self.state = copy.copy(self.mu)
+
+    def sample(self):
+        """Updates internal state and return it as noise sample."""
+        x = self.state
+        noise = np.random.rand(len(x))
+        dx = self.theta * (self.mu - x) + self.sigma * noise
+        self.state = x + dx
+        return self.state
