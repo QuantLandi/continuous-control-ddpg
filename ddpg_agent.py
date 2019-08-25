@@ -46,7 +46,7 @@ class Agent():
         # create critic's local and target networks and local network's optimizer
         self.critic_local = Critic(state_size, action_size, random_seed).to(device)
         self.critic_target = Critic(state_size, action_size, random_seed).to(device)
-        self.critic_optimizer = optim.Adam(self.actor_critic.parameters(),
+        self.critic_optimizer = optim.Adam(self.critic_local.parameters(),
                                            lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
         
         # create Ornstein-Uhlenbeck noise to be added to action space
@@ -177,7 +177,7 @@ class OUNoise:
         self.seed = random.seed(seed)
         self.reset()
 
-    def reset(self)
+    def reset(self):
         """Resets internal state (i.e. noise) to mean (i.e. mu)."""
         self.state = copy.copy(self.mu)
 
