@@ -213,6 +213,11 @@ class ReplayBuffer:
 
     def add(self, state, action, reward, next_state, is_episode_over):
         """Adds new experience batch to replay buffer memory."""
+        experience = self.experience(state, action, reward, next_state, is_episode_over)
+        self.memory.append(experience)
+
+    def sample(self):
+        """Samples batch of experiences at random from replay memory"""
         experiences = random.sample(self.memory, k=self.batch_size)
 
         states = [e.state for e in experiences if e is not None]
