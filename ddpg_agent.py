@@ -146,7 +146,7 @@ class Agent():
         self.soft_update(self.critic_local, self.critic_target, TAU)
         self.soft_update(self.actor_local, self.actor_target, TAU)
 
-    def soft_update(local_network, target_network, tau):
+    def soft_update(self, local_network, target_network, tau):
         """
         Performs soft update of network weights.
         Sets target_weights = tau*local_weights + (1-tau)*target_weights
