@@ -12,7 +12,7 @@ def hidden_init(layer):
 class Actor(nn.Module):
     """Actor (Policy) Model"""
 
-    def __init__(self, state_size, action_size, seed, output_layer_units=256):
+    def __init__(self, state_size, action_size, seed, hidden_layer_units=256):
         """Initializes parameters and defines model architecture.
         
         Parameters
@@ -35,8 +35,8 @@ class Actor(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.hidden_layer_logits.weight.data.uniform(*hidden_init(self.layer1_logits))
-        self.output_layer_logits.weight.data.uniform(-3e-3, 3e-3)
+        self.hidden_layer_logits.weight.data.uniform_(*hidden_init(self.hidden_layer_logits))
+        self.output_layer_logits.weight.data.uniform_(-3e-3, 3e-3)
 
     def forward(self, state):
         """Builds an actor (policy) network that maps states -> actions"""
@@ -81,12 +81,12 @@ class Critic(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.layer1_logits.weight.data.uniform(*hidden_init(self.layer1_logits))
-        self.layer2_logits.weight.data.uniform(*hidden_init(self.layer2_logits))
-        self.layer3_logits.weight.data.uniform(*hidden_init(self.layer3_logits))
-        self.output_layer_logit.weight.data.uniform(-3e-3, 3e-3)
+        self.layer1_logits.weight.data.uniform_(*hidden_init(self.layer1_logits))
+        self.layer2_logits.weight.data.uniform_(*hidden_init(self.layer2_logits))
+        self.layer3_logits.weight.data.uniform_(*hidden_init(self.layer3_logits))
+        self.output_layer_logit.weight.data.uniform_(-3e-3, 3e-3)
 
-    def forward(self, state):
+    def forward(self, state, action):
         """
         Builds a critic (value) network that maps (state, action) -> Q-value. 
         """
