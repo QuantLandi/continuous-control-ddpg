@@ -234,3 +234,7 @@ class ReplayBuffer:
         is_episode_over = torch.from_numpy(is_episode_over).float().to(device)
 
         return (states, actions, rewards, next_states, is_episode_over)
+
+    def __len__(self):
+        """Return the current size of internal memory."""
+        return len(self.memory)
